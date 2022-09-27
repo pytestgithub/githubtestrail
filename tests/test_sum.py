@@ -1,12 +1,9 @@
 import pytest
 
 
-def test_sum_two_numbers():
+def test_add():
     assert 1 + 1 == 2
 
-
-def test_sum_two_decimals():
-    assert 0.8 + 0.3 == 1.2
 
 
 @pytest.mark.parametrize("test_input,expected", [("3+5", 8), ("2+4", 6)])
