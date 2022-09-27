@@ -23,7 +23,7 @@ jobs:
           junitparser merge --glob "reports/TEST-*" "reports/junit-report.xml"
           trcli -y \
             -h https://xyzz.testrail.io/ \
-            --project "add" \
+            --project "test_add" \
             -u khalilahmed427@gmail.com \
             -p khalilAHMED1! \
             parse_junit \
