@@ -1,5 +1,32 @@
-host: https://xyzz.testrail.io
-project: add
-username: khalilahmed427@gmail.com
-password: khalilAHMED1!
-title: Pytest Automated Test Run
+name: cypress-tests
+on: [workflow_dispatch]
+jobs:
+  execute-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cypress run
+        id: cypress
+        uses: cypress-io/github-action@v4
+        with:
+          start: npm start
+      - name: Python setup
+        if: always()
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.x'
+      - name: TestRail CLI upload results
+        if: always()
+        run: |
+          pip install trcli
+          junitparser merge --glob "reports/TEST-*" "reports/junit-report.xml"
+          trcli -y \
+            -h https://xyzz.testrail.io/ \
+            --project "add" \
+            -u khalilahmed427@gmail.com \
+            -p khalilAHMED1! \
+            parse_junit \
+            --title "Automated Tests from GitHub workflow" \
+            --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
+            -f "reports/junit-report.xml"
