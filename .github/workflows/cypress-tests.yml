@@ -1,27 +1,32 @@
-name: send-results-to-testrail
-on: [workflow_dispatch]
+name: cypress-tests
+on: [push]
 jobs:
-  send-test-results-to-testrail:
+  execute-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Execute automated tests
+      - name: Cypress run
+        id: cypress
+        uses: cypress-io/github-action@v4
+        with:
+          start: npm start
       - name: Python setup
         if: always()
         uses: actions/setup-python@v3
         with:
-          python-version: '3.x'
+          python-version: '3.10'
       - name: TestRail CLI upload results
         if: always()
         run: |
           pip install trcli
+          junitparser merge --glob "reports/TEST-*" "reports/junit-report.xml"
           trcli -y \
-            -h https://TESTRAIL_INSTANCE.testrail.io/ \
-            --project "PROJECT NAME" \
-            -u USER_EMAIL \
-            -p PASSWORD \
+            -h https://xyzz.testrail.io/ \
+            --project "test_add" \
+            -u khalilahmed427@gmail.com \
+            -p khalilAHMED1! \
             parse_junit \
             --title "Automated Tests from GitHub workflow" \
             --run-description ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} \
-            -f "junit-report.xml"
+            -f "reports/junit-report.xml"
